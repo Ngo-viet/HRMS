@@ -13,7 +13,7 @@ import javax.persistence.Table;
 @EqualsAndHashCode(callSuper = true)
 @Entity
 @Data
-@Table(name="HR_USER")
+@Table(name="HRM_USER")
 public class User extends BaseEntity
 {
 	@Id

@@ -10,6 +10,6 @@ import com.hrms.model.Leaves;
 public interface LeaveRepository extends JpaRepository<Leaves, Integer> 
 {
 	 //some specific methods
-	 public Employee findEmailByEid(int id);
+	 Employee findEmailByEmployeeId(int id);
 
 }
