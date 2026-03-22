@@ -20,31 +20,46 @@ public class SalaryController {
     @Autowired
     private SalaryService sservice;
 
-    // get list of salary
+    /**
+     * GET /salaryreport
+     * Trả về danh sách các bản ghi lương.
+     */
     @GetMapping("/salaryreport")
     public List<Salary> getSalary() {
         return sservice.fetchSalary();
     }
 
-    // add salary
+    /**
+     * POST /addsalary
+     * Thêm bản ghi lương mới. Body: Salary JSON
+     */
     @PostMapping("/addsalary")
     public Salary addsalary(@RequestBody Salary salary) {
         return sservice.register(salary);
     }
 
-    // get employee salary by id
+    /**
+     * GET /editsalary/{sid}
+     * Lấy bản ghi lương theo id.
+     */
     @GetMapping("/editsalary/{sid}")
     public Salary getSalaryById(@PathVariable int sid) {
         return sservice.getById(sid).get();
     }
 
-    // Edit Salary
+    /**
+     * POST /editsalary
+     * Cập nhật bản ghi lương. Body: Salary JSON
+     */
     @PostMapping("/editsalary")
     public Salary editSalary(@RequestBody Salary salary) {
         return sservice.editSalary(salary);
     }
 
-    // delete Salary by id
+    /**
+     * GET /deletesalary/{sid}
+     * Xóa bản ghi lương theo id.
+     */
     @GetMapping("/deletesalary/{sid}")
     public void deleteSalary(@PathVariable int sid) {
         sservice.deleteSalary(sid);

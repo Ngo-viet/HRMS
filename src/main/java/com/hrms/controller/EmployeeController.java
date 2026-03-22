@@ -20,13 +20,19 @@ public class EmployeeController {
     @Autowired
     private EmployeeService eservice;
 
-    // Get list of employee
+    /**
+     * GET /employeereport
+     * Trả về danh sách tất cả nhân viên.
+     */
     @GetMapping("/employeereport")
     public List<Employee> getemployees() {
         return eservice.fetchEmployees();
     }
 
-    // Register Employee
+    /**
+     * POST /addemployee
+     * Tạo mới một nhân viên. Body: Employee JSON. Kiểm tra trùng email trước khi tạo.
+     */
     @PostMapping("/addemployee")
     public Employee registerEmployee(@RequestBody Employee employee) throws Exception {
         String tempEmail = employee.getEmail();
@@ -40,25 +46,37 @@ public class EmployeeController {
         return employeeObj;
     }
 
-    // get employee by id
+    /**
+     * GET /editemployee/{id}
+     * Lấy thông tin employee theo id để edit.
+     */
     @GetMapping("/editemployee/{id}")
     public Employee getEmpById(@PathVariable int id) {
         return eservice.getById(id).get();
     }
 
-    // edit employee
+    /**
+     * POST /editemployee
+     * Cập nhật thông tin employee. Body: Employee JSON
+     */
     @PostMapping("/editemployee")
     public Employee editEmployee(@RequestBody Employee employee) {
         return eservice.editEmployee(employee);
     }
 
-    // delete employee by id
+    /**
+     * GET /deleteemployee/{id}
+     * Xóa employee theo id.
+     */
     @GetMapping("/deleteemployee/{id}")
     public void deleteEmployee(@PathVariable int id) {
         eservice.deleteEmp(id);
     }
 
-    // search employee by email id
+    /**
+     * GET /searchemail/{email}
+     * Tìm employee theo email.
+     */
     @GetMapping("/searchemail/{email}")
     public Employee findEmployee(@PathVariable String email) {
         System.out.println(email);

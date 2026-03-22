@@ -133,4 +133,79 @@ VALUES
 (7,'user6','user6@gmail.com','0907','HR','Addr7','123456',NOW(),'system',false),
 (8,'user7','user7@gmail.com','0908','IT','Addr8','123456',NOW(),'system',false),
 (9,'user8','user8@gmail.com','0909','Finance','Addr9','123456',NOW(),'system',false),
-(10,'user9','user9@gmail.com','0910','HR','Addr10','123456',NOW(),'system',false);
+(10,'user9','user9@gmail.com','0910','HR','Addr10','123456',NOW(),'system',false),
++-- Roles table
++CREATE TABLE IF NOT EXISTS DB_HRMS.HRM_ROLE (
++    role_id INT PRIMARY KEY AUTO_INCREMENT,
++    role_name VARCHAR(100) UNIQUE NOT NULL,
++    description VARCHAR(255),
++
++    created_date TIMESTAMP NOT NULL,
++    created_by VARCHAR(100) NOT NULL,
++    updated_date TIMESTAMP,
++    updated_by VARCHAR(100),
++    is_deleted BOOLEAN NOT NULL DEFAULT FALSE
++);
++
++-- Join table user-role
++CREATE TABLE IF NOT EXISTS DB_HRMS.HRM_USER_ROLE (
++    user_id INT NOT NULL,
++    role_id INT NOT NULL,
++    PRIMARY KEY (user_id, role_id),
++    CONSTRAINT fk_ur_user FOREIGN KEY (user_id) REFERENCES DB_HRMS.HRM_USER(user_id),
++    CONSTRAINT fk_ur_role FOREIGN KEY (role_id) REFERENCES DB_HRMS.HRM_ROLE(role_id)
++);
++
++-- Features table
++CREATE TABLE IF NOT EXISTS DB_HRMS.HRM_FEATURE (
++    feature_id INT PRIMARY KEY AUTO_INCREMENT,
++    feature_name VARCHAR(150) UNIQUE NOT NULL,
++    endpoint VARCHAR(255),
++    description VARCHAR(255),
++
++    created_date TIMESTAMP NOT NULL,
++    created_by VARCHAR(100) NOT NULL,
++    updated_date TIMESTAMP,
++    updated_by VARCHAR(100),
++    is_deleted BOOLEAN NOT NULL DEFAULT FALSE
++);
++
++-- Permissions table (role - feature mapping with CRUD flags)
++CREATE TABLE IF NOT EXISTS DB_HRMS.HRM_PERMISSION (
++    permission_id INT PRIMARY KEY AUTO_INCREMENT,
++    role_id INT NOT NULL,
++    feature_id INT NOT NULL,
++    can_create BOOLEAN DEFAULT FALSE,
++    can_read BOOLEAN DEFAULT FALSE,
++    can_update BOOLEAN DEFAULT FALSE,
++    can_delete BOOLEAN DEFAULT FALSE,
++
++    created_date TIMESTAMP NOT NULL,
++    created_by VARCHAR(100) NOT NULL,
++    updated_date TIMESTAMP,
++    updated_by VARCHAR(100),
++    is_deleted BOOLEAN NOT NULL DEFAULT FALSE,
++
++    CONSTRAINT fk_perm_role FOREIGN KEY (role_id) REFERENCES DB_HRMS.HRM_ROLE(role_id),
++    CONSTRAINT fk_perm_feature FOREIGN KEY (feature_id) REFERENCES DB_HRMS.HRM_FEATURE(feature_id)
++);
++
++-- Role-Feature-Permission join table (alternative denormalized mapping)
++CREATE TABLE IF NOT EXISTS DB_HRMS.HRM_ROLE_FP (
++    id INT PRIMARY KEY AUTO_INCREMENT,
++    role_id INT NOT NULL,
++    feature_id INT NOT NULL,
++    can_create BOOLEAN DEFAULT FALSE,
++    can_read BOOLEAN DEFAULT FALSE,
++    can_update BOOLEAN DEFAULT FALSE,
++    can_delete BOOLEAN DEFAULT FALSE,
++
++    created_date TIMESTAMP NOT NULL,
++    created_by VARCHAR(100) NOT NULL,
++    updated_date TIMESTAMP,
++    updated_by VARCHAR(100),
++    is_deleted BOOLEAN NOT NULL DEFAULT FALSE,
++
++    CONSTRAINT fk_rfp_role FOREIGN KEY (role_id) REFERENCES DB_HRMS.HRM_ROLE(role_id),
++    CONSTRAINT fk_rfp_feature FOREIGN KEY (feature_id) REFERENCES DB_HRMS.HRM_FEATURE(feature_id)
++);

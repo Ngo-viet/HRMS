@@ -16,7 +16,11 @@ public class UserController {
     @Autowired
     private UserService uservice;
 
-    // login HR User Only
+    /**
+     * POST /loginuser
+     * Đăng nhập cho HR user (local auth - DB). Body: User JSON (email,password).
+     * Trả về User khi credentials đúng, hoặc ném Exception nếu sai.
+     */
     @PostMapping("/loginuser")
     public User loginUser(@RequestBody User user) throws Exception {
         String tempEmail = user.getEmail();
@@ -31,7 +35,10 @@ public class UserController {
         return userObj;
     }
 
-    // add hr user
+    /**
+     * POST /addhr
+     * Tạo tài khoản HR mới. Body: User JSON (username,email,password,...)
+     */
     @PostMapping("/addhr")
     public User addHr(@RequestBody User user) throws Exception {
         String tempEmail = user.getEmail();

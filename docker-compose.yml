@@ -1,0 +1,82 @@
+version: '3.8'
+
+services:
+
+  # ----------------------------------------------------------------
+  # MySQL Database
+  # ----------------------------------------------------------------
+  db:
+    image: mysql:8.0
+    container_name: hrms-db
+    environment:
+      - MYSQL_DATABASE=db_hrms
+      - MYSQL_ROOT_PASSWORD=123456
+    volumes:
+      - ./mysql-data:/var/lib/mysql
+    ports:
+      - "3306:3306"
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  # ----------------------------------------------------------------
+  # Keycloak
+  # ----------------------------------------------------------------
+  keycloak:
+    image: quay.io/keycloak/keycloak:21.1.1
+    container_name: keycloak
+    environment:
+      - KEYCLOAK_ADMIN=admin
+      - KEYCLOAK_ADMIN_PASSWORD=admin
+    command: start-dev
+    ports:
+      - "8180:8080" # host:container so app can reach keycloak at http://keycloak:8080 and host at :8180
+    volumes:
+      - ./keycloak-data:/opt/keycloak/data
+      - ./keycloak-realm.json:/opt/keycloak/data/import/realm-import.json:ro
+    depends_on:
+      - db
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8080/health/ready"]
+      interval: 10s
+      timeout: 5s
+      retries: 6
+
+  # ----------------------------------------------------------------
+  # Spring Boot App
+  # ----------------------------------------------------------------
+  hrms-app:
+    build: .
+    container_name: hrms-app
+    ports:
+      - "8081:8080" # map app to host 8081 to avoid conflict with keycloak
+    environment:
+      - SPRING_DATASOURCE_URL=jdbc:mysql://hrms-db:3306/db_hrms
+      - SPRING_DATASOURCE_USERNAME=root
+      - SPRING_DATASOURCE_PASSWORD=123456
+
+      - SPRING_SECURITY_OAUTH2_CLIENT_PROVIDER_KEYCLOAK_ISSUER_URI=http://keycloak:8080/realms/hrms
+      - SPRING_SECURITY_OAUTH2_RESOURCESERVER_JWT_ISSUER_URI=http://keycloak:8080/realms/hrms
+      - SPRING_SECURITY_OAUTH2_CLIENT_REGISTRATION_KEYCLOAK_CLIENT_ID=hrms-client
+      - SPRING_SECURITY_OAUTH2_CLIENT_REGISTRATION_KEYCLOAK_CLIENT_SECRET=hrms-secret
+
+      - APP_BASE_URL=http://localhost:8081
+      - KEYCLOAK_LOGOUT_URL=http://keycloak:8080/realms/hrms/protocol/openid-connect/logout
+      - KEYCLOAK_LOGIN_URL=http://keycloak:8080/realms/hrms/protocol/openid-connect/auth
+      - KEYCLOAK_CLIENT_ID=hrms-client
+    depends_on:
+      - db
+      - keycloak
+    restart: on-failure
+
+# ----------------------------------------------------------------
+# Volumes & Networks
+# ----------------------------------------------------------------
+volumes:
+  mysql-data:
+
+networks:
+  hrms-network:
+    driver: bridge

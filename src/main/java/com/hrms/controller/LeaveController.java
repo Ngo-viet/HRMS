@@ -21,13 +21,20 @@ public class LeaveController {
     @Autowired
     private LeaveService lservice;
 
-    // get list of leaves
+    /**
+     * GET /leavesreport
+     * Trả về danh sách tất cả các đơn nghỉ phép.
+     */
     @GetMapping("/leavesreport")
     public List<Leaves> getLeaves() {
         return lservice.fetchLeaves();
     }
 
-    // add leaves
+    /**
+     * POST /addleaves
+     * Thêm mới đơn nghỉ phép cho employee. Body: Leaves JSON (cần employeeId).
+     * Service sẽ tìm email của employee theo employeeId và gán vào đơn.
+     */
     @PostMapping("/addleaves")
     public Leaves addLeaves(@RequestBody Leaves leaves) throws Exception {
         int tempId = leaves.getEmployeeId();
@@ -42,19 +49,28 @@ public class LeaveController {
         }
     }
 
-    // get leave by id
+    /**
+     * GET /editleaves/{id}
+     * Lấy chi tiết 1 đơn nghỉ phép theo id.
+     */
     @GetMapping("/editleaves/{id}")
     public Leaves getLeavesById(@PathVariable int id) {
         return lservice.getById(id).get();
     }
 
-    // edit Leaves
+    /**
+     * POST /editleaves
+     * Cập nhật đơn nghỉ phép. Body: Leaves JSON
+     */
     @PostMapping("/editleaves")
     public Leaves editLeave(@RequestBody Leaves leaves) {
         return lservice.editLeaves(leaves);
     }
 
-    // delete Leaves by id
+    /**
+     * GET /deleteleaves/{id}
+     * Xóa đơn nghỉ phép theo id.
+     */
     @GetMapping("/deleteleaves/{id}")
     public void deleteLeaves(@PathVariable int id) {
         lservice.deleteleaves(id);

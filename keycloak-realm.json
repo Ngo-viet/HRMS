@@ -1,0 +1,33 @@
+{
+  "realm": "hrms",
+  "enabled": true,
+  "clients": [
+    {
+      "clientId": "hrms-client",
+      "enabled": true,
+      "clientAuthenticatorType": "client-secret",
+      "secret": "hrms-secret",
+      "redirectUris": ["http://localhost:8081/login/oauth2/code/keycloak"],
+      "publicClient": false,
+      "protocol": "openid-connect",
+      "standardFlowEnabled": true,
+      "directAccessGrantsEnabled": true,
+      "attributes": {
+        "post.logout.redirect.uris": "[\"http://localhost:8081/\"]"
+      }
+    }
+  ],
+  "users": [
+    {
+      "username": "testuser",
+      "enabled": true,
+      "credentials": [
+        {
+          "type": "password",
+          "value": "password",
+          "temporary": false
+        }
+      ]
+    }
+  ]
+}

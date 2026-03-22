@@ -3,12 +3,9 @@ package com.hrms.model;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.Table;
+import jakarta.persistence.*;
+import java.util.HashSet;
+import java.util.Set;
 
 @EqualsAndHashCode(callSuper = true)
 @Entity
@@ -37,5 +34,23 @@ public class User extends BaseEntity
 
 	@Column(name="password")
 	private String password;
+
+	// Many-to-Many user <-> role
+	@ManyToMany(fetch = FetchType.LAZY)
+	@JoinTable(
+		name = "HRM_USER_ROLE",
+		joinColumns = @JoinColumn(name = "user_id"),
+		inverseJoinColumns = @JoinColumn(name = "role_id")
+	)
+	private Set<Role> roles = new HashSet<>();
+
+    // Explicit getter/setter for tools that don't process Lombok
+    public Set<Role> getRoles() {
+        return this.roles;
+    }
+
+    public void setRoles(Set<Role> roles) {
+        this.roles = roles;
+    }
 
 }
