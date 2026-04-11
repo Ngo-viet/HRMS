@@ -1,6 +1,7 @@
 package com.hrms.controller;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -16,24 +17,9 @@ public class UserController {
     @Autowired
     private UserService uservice;
 
-    /**
-     * POST /loginuser
-     * Đăng nhập cho HR user (local auth - DB). Body: User JSON (email,password).
-     * Trả về User khi credentials đúng, hoặc ném Exception nếu sai.
-     */
-    @PostMapping("/loginuser")
-    public User loginUser(@RequestBody User user) throws Exception {
-        String tempEmail = user.getEmail();
-        String tempPassword = user.getPassword();
-        User userObj = null;
-        if (tempEmail != null && tempPassword != null) {
-            userObj = uservice.fetchUserByEmailAndPassword(tempEmail, tempPassword);
-        }
-        if (userObj == null) {
-            throw new Exception("Bad Crediential");
-        }
-        return userObj;
-    }
+    @Autowired
+    private PasswordEncoder passwordEncoder;
+
 
     /**
      * POST /addhr
@@ -47,6 +33,10 @@ public class UserController {
         if (user1 != null) {
             throw new Exception("User with " + tempEmail + " allready exist ");
         } else {
+            // encode password before saving
+            if (user.getPassword() != null) {
+                user.setPassword(passwordEncoder.encode(user.getPassword()));
+            }
             user1 = uservice.register(user);
             return user1;
         }

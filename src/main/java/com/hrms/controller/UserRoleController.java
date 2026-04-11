@@ -46,6 +46,17 @@ public class UserRoleController {
     }
 
     /**
+     * POST /users/{userId}/roles
+     * (Optional) API để gán nhiều role cho user bằng danh sách roleId trong body.
+     * Body: [1,2,3]
+     */
+    @PostMapping("/users/{userId}/roles")
+    public ResponseEntity<Void> assignMultipleRoles(@PathVariable int userId, @RequestBody java.util.List<Integer> roleIds) throws Exception {
+        for (Integer r : roleIds) userRoleService.assignRoleToUser(userId, r);
+        return ResponseEntity.ok().build();
+    }
+
+    /**
      * DELETE /users/{userId}/roles/{roleId}
      * Bỏ role khỏi user.
      */

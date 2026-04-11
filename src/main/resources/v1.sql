@@ -26,6 +26,10 @@ CREATE TABLE DB_HRMS.HRM_LEAVES (
     to_date VARCHAR(50),
     description VARCHAR(255),
     email VARCHAR(150),
+    -- Approval workflow fields
+    status VARCHAR(20),
+    approved_by VARCHAR(100),
+    approved_date DATE,
 
     created_date TIMESTAMP NOT NULL,
     created_by VARCHAR(100) NOT NULL,
@@ -208,4 +212,85 @@ VALUES
 +
 +    CONSTRAINT fk_rfp_role FOREIGN KEY (role_id) REFERENCES DB_HRMS.HRM_ROLE(role_id),
 +    CONSTRAINT fk_rfp_feature FOREIGN KEY (feature_id) REFERENCES DB_HRMS.HRM_FEATURE(feature_id)
++);
++
++-- Attendance table
++CREATE TABLE IF NOT EXISTS DB_HRMS.HRM_ATTENDANCE (
++    attendance_id INT PRIMARY KEY AUTO_INCREMENT,
++    emp_id INT NOT NULL,
++    att_date DATE NOT NULL,
++    hours_worked DOUBLE,
++    status VARCHAR(50),
++    leave_id INT,
++
++    created_date TIMESTAMP NOT NULL,
++    created_by VARCHAR(100) NOT NULL,
++    updated_date TIMESTAMP,
++    updated_by VARCHAR(100),
++    is_deleted BOOLEAN NOT NULL DEFAULT FALSE,
++
++    CONSTRAINT fk_att_emp FOREIGN KEY (emp_id) REFERENCES DB_HRMS.HRM_EMPLOYEE(id),
++    CONSTRAINT fk_att_leave FOREIGN KEY (leave_id) REFERENCES DB_HRMS.HRM_LEAVES(leave_id)
++);
++
++-- Overtime table
++CREATE TABLE IF NOT EXISTS DB_HRMS.HRM_OT (
++    ot_id INT PRIMARY KEY AUTO_INCREMENT,
++    emp_id INT NOT NULL,
++    ot_date DATE NOT NULL,
++    start_time TIME,
++    end_time TIME,
++    hours DOUBLE,
++    reason VARCHAR(255),
++
++    status VARCHAR(20), -- PENDING / APPROVED / REJECTED
++    approved_by VARCHAR(100),
++    approved_date DATE,
++
++    created_date TIMESTAMP NOT NULL,
++    created_by VARCHAR(100) NOT NULL,
++    updated_date TIMESTAMP,
++    updated_by VARCHAR(100),
++    is_deleted BOOLEAN NOT NULL DEFAULT FALSE,
++
++    CONSTRAINT fk_ot_emp FOREIGN KEY (emp_id) REFERENCES DB_HRMS.HRM_EMPLOYEE(id)
++);
++
++-- Performance table (KPI)
++CREATE TABLE IF NOT EXISTS DB_HRMS.HRM_PERFORMANCE (
++    performance_id INT PRIMARY KEY AUTO_INCREMENT,
++    emp_id INT NOT NULL,
++    period VARCHAR(20),
++    kpi_score DOUBLE,
++    rating VARCHAR(50),
++    comments VARCHAR(2000),
++    review_date DATE,
++
++    created_date TIMESTAMP NOT NULL,
++    created_by VARCHAR(100) NOT NULL,
++    updated_date TIMESTAMP,
++    updated_by VARCHAR(100),
++    is_deleted BOOLEAN NOT NULL DEFAULT FALSE,
++
++    CONSTRAINT fk_perf_emp FOREIGN KEY (emp_id) REFERENCES DB_HRMS.HRM_EMPLOYEE(id)
++);
++
++-- Contract table
++CREATE TABLE IF NOT EXISTS DB_HRMS.HRM_CONTRACT (
++    contract_id INT PRIMARY KEY AUTO_INCREMENT,
++    emp_id INT NOT NULL,
++    start_date DATE,
++    end_date DATE,
++    contract_type VARCHAR(50),
++    contract_salary VARCHAR(100),
++    status VARCHAR(50),
++    notes VARCHAR(2000),
++
++    created_date TIMESTAMP NOT NULL,
++    created_by VARCHAR(100) NOT NULL,
++    updated_date TIMESTAMP,
++    updated_by VARCHAR(100),
++    is_deleted BOOLEAN NOT NULL DEFAULT FALSE,
++
++    CONSTRAINT fk_contract_emp FOREIGN KEY (emp_id) REFERENCES DB_HRMS.HRM_EMPLOYEE(id)
 +);

@@ -77,4 +77,29 @@ public class LeaveService {
 
 	}
 
+	// Fetch leaves with status = PENDING
+	public List<Leaves> fetchPendingLeaves() {
+		return repo.findAll().stream()
+				.filter(l -> l.getStatus() == null || "PENDING".equalsIgnoreCase(l.getStatus()))
+				.toList();
+	}
+
+	// Approve leave by id
+	public Leaves approveLeave(int id, String approver) throws Exception {
+		Leaves leave = repo.findById(id).orElseThrow(() -> new Exception("Leave not found"));
+		leave.setStatus("APPROVED");
+		leave.setApprovedBy(approver);
+		leave.setApprovedDate(java.time.LocalDate.now());
+		return repo.save(leave);
+	}
+
+	// Reject leave by id
+	public Leaves rejectLeave(int id, String approver) throws Exception {
+		Leaves leave = repo.findById(id).orElseThrow(() -> new Exception("Leave not found"));
+		leave.setStatus("REJECTED");
+		leave.setApprovedBy(approver);
+		leave.setApprovedDate(java.time.LocalDate.now());
+		return repo.save(leave);
+	}
+
 }

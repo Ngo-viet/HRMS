@@ -309,7 +309,122 @@ curl -X POST -H "Content-Type: application/json" -d '{"firstName":"Nguyen","last
 ---
 
 Nếu bạn muốn tôi: 
-- xuất file này sang `.txt` thay vì `.md`, hoặc 
+- xuất file này sang `.txt` thay vì `.md`, hoặc
 - thêm ví dụ request/response chi tiết cho từng endpoint, hoặc
 - tự động generate Postman collection từ các endpoint hiện có,
 hãy cho biết lựa chọn.
+
+### Attendance (Chấm công)
+- POST /attendance
+  - Mô tả: Ghi nhận chấm công cho nhân viên.
+  - Body: Attendance JSON: { employeeId, date(YYYY-MM-DD), hoursWorked, status: PRESENT|ABSENT|LEAVE, leaveId (optional) }
+
+- GET /attendance/{id}
+  - Mô tả: Lấy chi tiết bản ghi chấm công theo id.
+
+- GET /attendance/employee/{empId}
+  - Mô tả: Lấy tất cả bản ghi chấm công của 1 nhân viên.
+
+- GET /attendance/employee/{empId}/period?from=yyyy-MM-dd&to=yyyy-MM-dd
+  - Mô tả: Lấy bản ghi chấm công trong khoảng thời gian.
+
+- GET /attendance/employee/{empId}/summary?from=yyyy-MM-dd&to=yyyy-MM-dd
+  - Mô tả: Trả về tổng hợp chấm công: totalPresentDays, totalHours, totalLeaves, totalAbsent
+  - Ví dụ:
+
+```bash
+curl "http://localhost:8081/attendance/employee/1/summary?from=2026-03-01&to=2026-03-31"
+```
+
+- POST /attendance/employee/{empId}/generate-salary?month=YYYY-MM
+  - Mô tả: Tạo bản ghi lương cho employee dựa trên dữ liệu chấm công trong tháng.
+  - Body: JSON có thể gồm các trường `basic`, `hra`, `ca`, `deduction`.
+  - Ví dụ:
+
+```bash
+curl -X POST -H "Content-Type: application/json" \
+  -d '{"basic":"1500","hra":"200","ca":"100","deduction":"50"}' \
+  "http://localhost:8081/attendance/employee/1/generate-salary?month=2026-03"
+```
+
+### Leave approval endpoints
+- POST /leaves/{id}/approve?approver=NAME
+  - Mô tả: Duyệt đơn nghỉ phép, đổi trạng thái thành APPROVED, lưu người duyệt và ngày duyệt.
+  - Ví dụ:
+
+```bash
+curl -X POST "http://localhost:8081/leaves/5/approve?approver=manager1"
+```
+
+- POST /leaves/{id}/reject?approver=NAME
+  - Mô tả: Từ chối đơn nghỉ phép, đổi trạng thái thành REJECTED.
+
+```bash
+curl -X POST "http://localhost:8081/leaves/5/reject?approver=manager1"
+```
+
+### Overtime (OT) endpoints
+- POST /ot
+  - Tạo bản ghi OT (Body: Overtime JSON: employeeId, date, startTime, endTime, hours, reason)
+
+- GET /ot/{id}
+  - Lấy chi tiết OT
+
+- GET /ot/employee/{empId}
+  - Lấy danh sách OT của employee
+
+- GET /ot/employee/{empId}/period?from=yyyy-MM-dd&to=yyyy-MM-dd
+  - Lấy OT theo khoảng thời gian
+
+- PUT /ot/{id}
+  - Cập nhật OT
+
+- DELETE /ot/{id}
+  - Xóa OT
+
+- POST /ot/{id}/approve?approver=NAME
+  - Duyệt OT (status -> APPROVED)
+
+- POST /ot/{id}/reject?approver=NAME
+  - Từ chối OT (status -> REJECTED)
+
+### Performance (KPI) endpoints
+- GET /performance
+  - Mô tả: Lấy tất cả bản ghi performance (kpi) (có thể paged sau).
+
+- GET /performance/{id}
+  - Mô tả: Lấy chi tiết performance theo id.
+
+- GET /performance/employee/{empId}
+  - Mô tả: Lấy tất cả performance của 1 nhân viên.
+
+- GET /performance/period/{period}
+  - Mô tả: Lấy performance theo kỳ (ví dụ 2026-03).
+
+- POST /performance
+  - Mô tả: Tạo bản ghi performance (Body: Performance JSON: employeeId, period, kpiScore, rating, comments, reviewDate)
+
+- PUT /performance/{id}
+  - Mô tả: Cập nhật bản ghi performance.
+
+- DELETE /performance/{id}
+  - Mô tả: Xóa bản ghi performance.
+
+### Contract endpoints
+- GET /contracts
+  - Mô tả: Lấy danh sách tất cả hợp đồng
+
+- GET /contracts/{id}
+  - Mô tả: Lấy chi tiết hợp đồng theo id
+
+- GET /contracts/employee/{empId}
+  - Mô tả: Lấy hợp đồng theo employee id
+
+- POST /contracts
+  - Mô tả: Tạo hợp đồng mới (Body: Contract JSON: employeeId, startDate, endDate, contractType, contractSalary, status, notes)
+
+- PUT /contracts/{id}
+  - Mô tả: Cập nhật hợp đồng theo id
+
+- DELETE /contracts/{id}
+  - Mô tả: Xóa hợp đồng
