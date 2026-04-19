@@ -36,8 +36,9 @@ public class SecurityConfig {
                                 "/perform-login",
                                 "/perform-logout",
                                 "/check-user",
-                                "/api/auth/**",
-                                "/addhr"
+                                "/addhr",
+                                // Temporary: allow all API under /api/** for debugging/testing
+                                "/api/**"
                         ).permitAll()
                         .requestMatchers("/me").authenticated()
                         .anyRequest().authenticated()

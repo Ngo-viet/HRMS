@@ -18,6 +18,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 @RestController
+@RequestMapping("/api/keycloak")
 public class KeycloakController {
 
     @Autowired
@@ -32,7 +33,7 @@ public class KeycloakController {
     private KeycloakAdminService keycloakAdminService; // retained but optional
 
     /**
-     * GET /check-user?usernameOrEmail=...
+     * GET /api/keycloak/check-user?usernameOrEmail=...
      * Mô tả: Kiểm tra user có tồn tại trong local DB (trước đây dùng Keycloak).
      * - Trả về: { exists: boolean, message, id?, username?, email? }
      *
@@ -78,7 +79,7 @@ public class KeycloakController {
     }
 
     /**
-     * GET /me
+     * GET /api/keycloak/me
      * Mô tả: Trả thông tin user đã xác thực (dựa trên Authentication principal). Nếu chưa đăng nhập trả 401.
      *
      * Note: When using local DB auth, the principal is a `UserDetails` built from
@@ -116,7 +117,7 @@ public class KeycloakController {
     }
 
     /**
-     * GET /perform-logout
+     * GET /api/keycloak/perform-logout
      * Mô tả: Thực hiện logout cục bộ (xóa session). Trước đây redirect sang Keycloak logout; giờ chỉ local logout.
      *
      * If you re-enable Keycloak OIDC login in the future, you may want to

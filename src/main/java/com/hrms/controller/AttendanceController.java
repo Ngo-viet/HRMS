@@ -17,6 +17,7 @@ import com.hrms.service.SalaryService;
 
 @RestController
 @CrossOrigin(origins = "http://localhost:4200")
+@RequestMapping("/api/attendance")
 public class AttendanceController {
 
     @Autowired
@@ -26,37 +27,37 @@ public class AttendanceController {
     private SalaryService salaryService;
 
     /**
-     * POST /attendance
+     * POST /api/attendance
      * Ghi nhận chấm công (thêm mới). Body: Attendance JSON (employeeId, date, hoursWorked, status, optional leaveId)
      */
-    @PostMapping("/attendance")
+    @PostMapping("")
     public Attendance createAttendance(@RequestBody Attendance a) {
         return attendanceService.register(a);
     }
 
     /**
-     * GET /attendance/{id}
+     * GET /api/attendance/{id}
      * Lấy chi tiết một bản ghi chấm công.
      */
-    @GetMapping("/attendance/{id}")
+    @GetMapping("/{id}")
     public ResponseEntity<Attendance> getById(@PathVariable int id) {
         return attendanceService.getById(id).map(ResponseEntity::ok).orElse(ResponseEntity.notFound().build());
     }
 
     /**
-     * GET /attendance/employee/{empId}
+     * GET /api/attendance/employee/{empId}
      * Lấy tất cả bản ghi chấm công của một nhân viên.
      */
-    @GetMapping("/attendance/employee/{empId}")
+    @GetMapping("/employee/{empId}")
     public List<Attendance> getByEmployee(@PathVariable int empId) {
         return attendanceService.fetchByEmployee(empId);
     }
 
     /**
-     * GET /attendance/employee/{empId}/period?from=yyyy-MM-dd&to=yyyy-MM-dd
+     * GET /api/attendance/employee/{empId}/period?from=yyyy-MM-dd&to=yyyy-MM-dd
      * Lấy bản ghi chấm công cho một nhân viên trong khoảng thời gian.
      */
-    @GetMapping("/attendance/employee/{empId}/period")
+    @GetMapping("/employee/{empId}/period")
     public List<Attendance> getByEmployeeAndPeriod(@PathVariable int empId,
                                                    @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate from,
                                                    @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate to) {
@@ -64,10 +65,10 @@ public class AttendanceController {
     }
 
     /**
-     * PUT /attendance/{id}
+     * PUT /api/attendance/{id}
      * Cập nhật bản ghi chấm công.
      */
-    @PutMapping("/attendance/{id}")
+    @PutMapping("/{id}")
     public ResponseEntity<Attendance> update(@PathVariable int id, @RequestBody Attendance a) {
         if (attendanceService.getById(id).isEmpty()) return ResponseEntity.notFound().build();
         a.setAttendanceId(id);
@@ -75,20 +76,20 @@ public class AttendanceController {
     }
 
     /**
-     * DELETE /attendance/{id}
+     * DELETE /api/attendance/{id}
      * Xóa bản ghi chấm công.
      */
-    @DeleteMapping("/attendance/{id}")
+    @DeleteMapping("/{id}")
     public ResponseEntity<Void> delete(@PathVariable int id) {
         attendanceService.delete(id);
         return ResponseEntity.noContent().build();
     }
 
     /**
-     * GET /attendance/employee/{empId}/summary?from=yyyy-MM-dd&to=yyyy-MM-dd
+     * GET /api/attendance/employee/{empId}/summary?from=yyyy-MM-dd&to=yyyy-MM-dd
      * Trả về tổng hợp chấm công: totalPresentDays, totalHours, totalLeaves, totalAbsent
      */
-    @GetMapping("/attendance/employee/{empId}/summary")
+    @GetMapping("/employee/{empId}/summary")
     public ResponseEntity<Map<String, Object>> getSummary(@PathVariable int empId,
                                                           @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate from,
                                                           @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate to) {
@@ -108,11 +109,11 @@ public class AttendanceController {
     }
 
     /**
-     * POST /attendance/employee/{empId}/generate-salary?month=YYYY-MM
+     * POST /api/attendance/employee/{empId}/generate-salary?month=YYYY-MM
      * Tạo bản ghi salary cho employee dựa trên chấm công trong tháng. Body có thể cung cấp basic/hra/ca/deduction.
      * Body example: { "basic": "1500", "hra": "200", "ca": "100", "deduction": "50" }
      */
-    @PostMapping("/attendance/employee/{empId}/generate-salary")
+    @PostMapping("/employee/{empId}/generate-salary")
     public ResponseEntity<Salary> generateSalary(@PathVariable int empId,
                                                  @RequestParam String month,
                                                  @RequestBody Map<String, String> payload) {

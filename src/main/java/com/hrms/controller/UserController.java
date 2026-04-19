@@ -5,6 +5,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.hrms.model.User;
@@ -12,6 +13,7 @@ import com.hrms.service.UserService;
 
 @RestController
 @CrossOrigin(origins = "http://localhost:4200")
+@RequestMapping("/api/users")
 public class UserController {
 
     @Autowired
@@ -22,7 +24,7 @@ public class UserController {
 
 
     /**
-     * POST /addhr
+     * POST /api/users/addhr
      * Tạo tài khoản HR mới. Body: User JSON (username,email,password,...)
      */
     @PostMapping("/addhr")

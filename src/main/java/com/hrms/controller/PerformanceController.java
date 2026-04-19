@@ -10,51 +10,52 @@ import java.util.List;
 
 @RestController
 @CrossOrigin(origins = "http://localhost:4200")
+@RequestMapping("/api/performance")
 public class PerformanceController {
 
     @Autowired
     private PerformanceService performanceService;
 
     /**
-     * GET /performance
+     * GET /api/performance
      * Trả về danh sách tất cả bản ghi performance (KPI).
      */
-    @GetMapping("/performance")
+    @GetMapping("")
     public List<Performance> listAll() { return performanceService.getByPeriod(null); }
 
     /**
-     * GET /performance/{id}
+     * GET /api/performance/{id}
      * Lấy chi tiết bản ghi performance theo id.
      */
-    @GetMapping("/performance/{id}")
+    @GetMapping("/{id}")
     public ResponseEntity<Performance> get(@PathVariable int id) { return performanceService.getById(id).map(ResponseEntity::ok).orElse(ResponseEntity.notFound().build()); }
 
     /**
-     * GET /performance/employee/{empId}
+     * GET /api/performance/employee/{empId}
      * Lấy tất cả bản ghi performance cho 1 nhân viên theo empId.
      */
-    @GetMapping("/performance/employee/{empId}")
+    @GetMapping("/employee/{empId}")
     public List<Performance> byEmployee(@PathVariable int empId) { return performanceService.getByEmployee(empId); }
 
     /**
-     * GET /performance/period/{period}
+     * GET /api/performance/period/{period}
      * Lấy danh sách performance theo kỳ (ví dụ: 2026-03).
      */
-    @GetMapping("/performance/period/{period}")
+    @GetMapping("/period/{period}")
     public List<Performance> byPeriod(@PathVariable String period) { return performanceService.getByPeriod(period); }
 
     /**
-     * POST /performance
+     * POST /api/performance
      * Tạo bản ghi performance mới. Body: Performance JSON (employeeId, period, kpiScore, rating, comments, reviewDate)
      */
-    @PostMapping("/performance")
+    @PostMapping("")
     public Performance create(@RequestBody Performance p) { return performanceService.create(p); }
 
     /**
-     * PUT /performance/{id}
+     * PUT /api/performance/{id}
      * Cập nhật thông tin performance theo id. Body: Performance JSON
      */
-    @PutMapping("/performance/{id}")
+    @PutMapping("/{id}")
     public ResponseEntity<Performance> update(@PathVariable int id, @RequestBody Performance p) {
         if (performanceService.getById(id).isEmpty()) return ResponseEntity.notFound().build();
         p.setPerformanceId(id);
@@ -62,9 +63,9 @@ public class PerformanceController {
     }
 
     /**
-     * DELETE /performance/{id}
+     * DELETE /api/performance/{id}
      * Xóa bản ghi performance theo id.
      */
-    @DeleteMapping("/performance/{id}")
+    @DeleteMapping("/{id}")
     public ResponseEntity<Void> delete(@PathVariable int id) { performanceService.delete(id); return ResponseEntity.noContent().build(); }
 }

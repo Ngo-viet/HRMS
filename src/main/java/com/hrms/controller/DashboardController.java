@@ -23,7 +23,7 @@ import java.util.stream.Collectors;
 
 @RestController
 @CrossOrigin(origins = "http://localhost:4200")
-@RequestMapping("/dashboard")
+@RequestMapping("/api/dashboard")
 public class DashboardController {
 
     @Autowired
@@ -48,7 +48,7 @@ public class DashboardController {
     private SalaryService salaryService;
 
     /**
-     * GET /dashboard/summary?from=yyyy-MM-dd&to=yyyy-MM-dd&period=YYYY-MM
+     * GET /api/dashboard/summary?from=yyyy-MM-dd&to=yyyy-MM-dd&period=YYYY-MM
      * Trả về các chỉ số tổng quan cho dashboard trong khoảng thời gian.
      * - totalEmployees
      * - totalContracts
@@ -128,7 +128,7 @@ public class DashboardController {
     }
 
     /**
-     * GET /dashboard/attendance/summary?from=&to=&empId(optional)
+     * GET /api/dashboard/attendance/summary?from=&to=&empId(optional)
      * Nếu empId được cung cấp trả summary cho emp đó, ngược lại trả list summary cho tất cả nhân viên.
      * Summary per employee: { empId, fullName, presentDays, totalHours, leaves, absent }
      */
@@ -180,7 +180,7 @@ public class DashboardController {
     }
 
     /**
-     * GET /dashboard/leaves?status=&from=&to=
+     * GET /api/dashboard/leaves?status=&from=&to=
      * Trả về danh sách đơn nghỉ theo filter status và khoảng thời gian (so sánh from/to của đơn).
      */
     @GetMapping("/leaves")

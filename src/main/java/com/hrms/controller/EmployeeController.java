@@ -3,25 +3,21 @@ package com.hrms.controller;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.CrossOrigin;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import com.hrms.model.Employee;
 import com.hrms.service.EmployeeService;
 
 @RestController
 @CrossOrigin(origins = "http://localhost:4200")
+@RequestMapping("/api")
 public class EmployeeController {
 
     @Autowired
     private EmployeeService eservice;
 
     /**
-     * GET /employeereport
+     * GET /api/employeereport
      * Trả về danh sách tất cả nhân viên.
      */
     @GetMapping("/employeereport")
@@ -30,7 +26,7 @@ public class EmployeeController {
     }
 
     /**
-     * POST /addemployee
+     * POST /api/addemployee
      * Tạo mới một nhân viên. Body: Employee JSON. Kiểm tra trùng email trước khi tạo.
      */
     @PostMapping("/addemployee")
@@ -47,7 +43,7 @@ public class EmployeeController {
     }
 
     /**
-     * GET /editemployee/{id}
+     * GET /api/editemployee/{id}
      * Lấy thông tin employee theo id để edit.
      */
     @GetMapping("/editemployee/{id}")
@@ -56,7 +52,7 @@ public class EmployeeController {
     }
 
     /**
-     * POST /editemployee
+     * POST /api/editemployee
      * Cập nhật thông tin employee. Body: Employee JSON
      */
     @PostMapping("/editemployee")
@@ -65,7 +61,7 @@ public class EmployeeController {
     }
 
     /**
-     * GET /deleteemployee/{id}
+     * GET /api/deleteemployee/{id}
      * Xóa employee theo id.
      */
     @GetMapping("/deleteemployee/{id}")
@@ -74,7 +70,7 @@ public class EmployeeController {
     }
 
     /**
-     * GET /searchemail/{email}
+     * GET /api/searchemail/{email}
      * Tìm employee theo email.
      */
     @GetMapping("/searchemail/{email}")

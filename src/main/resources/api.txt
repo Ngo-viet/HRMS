@@ -1,0 +1,276 @@
+Tổng hợp API của project HRMS (đã chuẩn hoá /api prefix)
+
+Ghi chú chung:
+- Tất cả endpoint controller giờ đều được namespace dưới /api hoặc /api/{resource} theo cấu hình controller.
+- File này liệt kê method, đường dẫn đầy đủ, mô tả ngắn gọn, và các param/body chính.
+- Một số endpoint là thao tác nội bộ (yêu cầu authentication/role) — xem cấu hình security.
+
+1) Authentication
+- POST /api/auth/login
+  - Mô tả: Đăng nhập (username hoặc email + password). Body: { "username": "...", "password": "..." }
+  - Trả về: message, id, username, email, roles (nếu có).
+
+- POST /api/auth/logout
+  - Mô tả: Đăng xuất cục bộ (hủy session trên server).
+
+2) Keycloak / Current user helpers
+- GET /api/keycloak/check-user?usernameOrEmail=...
+  - Mô tả: Kiểm tra user có tồn tại trong DB; nếu không và KeycloakAdminService được cấu hình, fallback kiểm tra Keycloak.
+  - Trả về: { exists: boolean, message, id?, username?, email? }
+
+- GET /api/keycloak/me
+  - Mô tả: Trả info user đã xác thực (dựa trên Authentication principal). Nếu chưa đăng nhập trả 401.
+  - Trả về: id, username, email, roles hoặc name.
+
+- GET /api/keycloak/perform-logout
+  - Mô tả: Logout cục bộ và redirect '/'. (Legacy Keycloak logout disabled)
+
+3) Employee
+- GET /api/employeereport
+  - Mô tả: Lấy danh sách tất cả nhân viên.
+
+- POST /api/addemployee
+  - Mô tả: Tạo nhân viên mới. Body: Employee JSON (email, firstName, lastName, ...). Kiểm tra trùng email.
+
+- GET /api/editemployee/{id}
+  - Mô tả: Lấy thông tin employee theo id để edit.
+
+- POST /api/editemployee
+  - Mô tả: Cập nhật employee. Body: Employee JSON.
+
+- GET /api/deleteemployee/{id}
+  - Mô tả: Xóa employee theo id.
+
+- GET /api/searchemail/{email}
+  - Mô tả: Tìm employee theo email.
+
+4) Contract
+- GET /api/contracts
+  - Mô tả: Lấy danh sách tất cả hợp đồng.
+
+- GET /api/contracts/{id}
+  - Mô tả: Lấy chi tiết hợp đồng theo id.
+
+- GET /api/contracts/employee/{empId}
+  - Mô tả: Lấy hợp đồng của 1 nhân viên.
+
+- POST /api/contracts
+  - Mô tả: Tạo hợp đồng mới. Body: ContractDto JSON (employeeId, startDate, endDate, contractType, contractSalary, status, notes).
+
+- PUT /api/contracts/{id}
+  - Mô tả: Cập nhật hợp đồng theo id. Body: ContractDto JSON.
+
+- DELETE /api/contracts/{id}
+  - Mô tả: Xóa hợp đồng theo id.
+
+5) Attendance (Ngày công)
+- POST /api/attendance
+  - Mô tả: Ghi nhận chấm công. Body: Attendance JSON (employeeId, date, hoursWorked, status, optional leaveId).
+
+- GET /api/attendance/{id}
+  - Mô tả: Lấy chi tiết bản ghi chấm công.
+
+- GET /api/attendance/employee/{empId}
+  - Mô tả: Lấy tất cả bản ghi chấm công của nhân viên.
+
+- GET /api/attendance/employee/{empId}/period?from=yyyy-MM-dd&to=yyyy-MM-dd
+  - Mô tả: Lấy chấm công theo khoảng thời gian.
+
+- PUT /api/attendance/{id}
+  - Mô tả: Cập nhật bản ghi chấm công.
+
+- DELETE /api/attendance/{id}
+  - Mô tả: Xóa bản ghi chấm công.
+
+- GET /api/attendance/employee/{empId}/summary?from=yyyy-MM-dd&to=yyyy-MM-dd
+  - Mô tả: Trả tổng hợp: totalPresentDays, totalHours, totalLeaves, totalAbsent.
+
+- POST /api/attendance/employee/{empId}/generate-salary?month=YYYY-MM
+  - Mô tả: Sinh Salary từ chấm công tháng. Body optional: { basic, hra, ca, deduction }.
+
+6) Leave (Nghỉ phép)
+- GET /api/leaves/report
+  - Mô tả: Lấy danh sách tất cả đơn nghỉ phép.
+
+- POST /api/leaves
+  - Mô tả: Thêm mới đơn nghỉ phép. Body: Leaves JSON (employeeId, fromDate, toDate, reason,...). Service gán email từ employeeId.
+
+- GET /api/leaves/{id}
+  - Mô tả: Lấy chi tiết đơn nghỉ phép theo id.
+
+- POST /api/leaves/edit
+  - Mô tả: Cập nhật đơn nghỉ phép. Body: Leaves JSON.
+
+- GET /api/leaves/delete/{id}
+  - Mô tả: Xóa đơn nghỉ phép theo id.
+
+- POST /api/leaves/{id}/approve?approver=NAME
+  - Mô tả: Duyệt đơn (status->APPROVED, approvedBy, approvedDate).
+
+- POST /api/leaves/{id}/reject?approver=NAME
+  - Mô tả: Từ chối đơn (status->REJECTED).
+
+- POST /api/leaves/approve/{id}?approver=NAME
+  - Mô tả: API bổ sung duyệt đơn (sử dụng service.approveLeave).
+
+- POST /api/leaves/reject/{id}?approver=NAME
+  - Mô tả: API bổ sung từ chối đơn (service.rejectLeave).
+
+- GET /api/leaves/pending?approver=NAME
+  - Mô tả: Lấy danh sách đơn đang chờ duyệt; trả kèm requestedBy và pendingLeaves.
+
+7) Overtime (OT)
+- POST /api/ot
+  - Mô tả: Tạo bản ghi OT. Body: Overtime JSON.
+
+- GET /api/ot/{id}
+  - Mô tả: Lấy chi tiết OT theo id.
+
+- GET /api/ot/employee/{empId}
+  - Mô tả: Lấy OT của nhân viên.
+
+- GET /api/ot/employee/{empId}/period?from=yyyy-MM-dd&to=yyyy-MM-dd
+  - Mô tả: Lấy OT theo khoảng thời gian.
+
+- PUT /api/ot/{id}
+  - Mô tả: Cập nhật OT.
+
+- DELETE /api/ot/{id}
+  - Mô tả: Xóa OT theo id.
+
+- POST /api/ot/{id}/approve?approver=NAME
+  - Mô tả: Duyệt OT.
+
+- POST /api/ot/{id}/reject?approver=NAME
+  - Mô tả: Từ chối OT.
+
+8) Performance (KPI)
+- GET /api/performance
+  - Mô tả: Lấy danh sách performance (KPI).
+
+- GET /api/performance/{id}
+  - Mô tả: Lấy chi tiết performance theo id.
+
+- GET /api/performance/employee/{empId}
+  - Mô tả: Lấy performance của employee.
+
+- GET /api/performance/period/{period}
+  - Mô tả: Lấy performance theo kỳ (ví dụ 2026-03).
+
+- POST /api/performance
+  - Mô tả: Tạo performance mới. Body: Performance JSON.
+
+- PUT /api/performance/{id}
+  - Mô tả: Cập nhật performance.
+
+- DELETE /api/performance/{id}
+  - Mô tả: Xóa performance.
+
+9) Salary
+- GET /api/salary/report
+  - Mô tả: Lấy danh sách bản ghi lương.
+
+- POST /api/salary
+  - Mô tả: Thêm bản ghi lương. Body: Salary JSON.
+
+- GET /api/salary/{sid}
+  - Mô tả: Lấy salary theo id.
+
+- POST /api/salary/edit
+  - Mô tả: Cập nhật salary. Body: Salary JSON.
+
+- GET /api/salary/delete/{sid}
+  - Mô tả: Xóa salary theo id.
+
+10) Role
+- GET /api/roles
+  - Mô tả: Lấy danh sách vai trò.
+
+- POST /api/roles
+  - Mô tả: Tạo vai trò mới. Body: Role JSON.
+
+- GET /api/roles/{id}
+  - Mô tả: Lấy role theo id.
+
+- PUT /api/roles/{id}
+  - Mô tả: Cập nhật role.
+
+- DELETE /api/roles/{id}
+  - Mô tả: Xóa role.
+
+11) Permission (Role-Feature flags)
+- GET /api/permissions
+  - Mô tả: Lấy danh sách permission (Role-Feature với flag CRUD).
+
+- POST /api/permissions
+  - Mô tả: Tạo permission mới. Body: Permission JSON (role{roleId}, feature{featureId}, canCreate, canRead, canUpdate, canDelete).
+
+- GET /api/permissions/{id}
+  - Mô tả: Lấy permission theo id.
+
+- PUT /api/permissions/{id}
+  - Mô tả: Cập nhật flags của permission.
+
+- DELETE /api/permissions/{id}
+  - Mô tả: Xóa permission.
+
+- GET /api/permissions/roles/{roleId}
+  - Mô tả: Lấy permission liên quan roleId (đường dẫn nằm dưới /api/permissions trong code hiện tại).
+
+- GET /api/permissions/features/{featureId}
+  - Mô tả: Lấy permission liên quan featureId.
+
+- POST /api/permissions/roles/{roleId}/features/{featureId}
+  - Mô tả: Gán permission cho cặp (role, feature). Body: flags JSON.
+
+- DELETE /api/permissions/roles/{roleId}/features/{featureId}
+  - Mô tả: Xóa permission cho cặp (role, feature).
+
+12) Role-Feature-Permission (RFP) aggregate
+- GET /api/rfp
+  - Mô tả: Lấy danh sách RFP.
+
+- GET /api/rfp/{id}
+  - Mô tả: Lấy chi tiết RFP.
+
+- POST /api/rfp
+  - Mô tả: Tạo RFP. Body: RoleFeaturePermission JSON (role{roleId}, feature{featureId}, flags).
+
+- PUT /api/rfp/{id}
+  - Mô tả: Cập nhật RFP.
+
+- DELETE /api/rfp/{id}
+  - Mô tả: Xóa RFP.
+
+- GET /api/rfp/roles/{roleId}
+  - Mô tả: Lấy RFP cho role.
+
+- GET /api/rfp/features/{featureId}
+  - Mô tả: Lấy RFP cho feature.
+
+- GET /api/rfp/roles/{roleId}/features/{featureId}
+  - Mô tả: Lấy RFP cho cặp role+feature.
+
+- POST /api/rfp/roles/{roleId}/features/{featureId}
+  - Mô tả: Tạo hoặc cập nhật RFP cho cặp role/feature.
+
+- DELETE /api/rfp/roles/{roleId}/features/{featureId}
+  - Mô tả: Xóa RFP cho cặp role/feature.
+
+13) User management
+- POST /api/users/addhr
+  - Mô tả: Tạo tài khoản HR mới. Body: User JSON (username, email, password, ...). Password sẽ được encoded.
+
+14) Dashboard helpers
+- GET /api/dashboard/summary?from=yyyy-MM-dd&to=yyyy-MM-dd&period=YYYY-MM
+  - Mô tả: Trả các chỉ số tổng quan: totalEmployees, totalContracts, pendingLeaves, approvedLeaves, totalPresentDays, totalOtHours, avgKpi, salaryCount, totalNetPaid.
+
+- GET /api/dashboard/attendance/summary?from=&to=&empId(optional)
+  - Mô tả: Nếu empId cung cấp trả summary cho emp đó, ngược lại trả list summary cho tất cả nhân viên.
+
+- GET /api/dashboard/leaves?status=&from=&to=
+  - Mô tả: Trả về danh sách đơn nghỉ theo filter status và khoảng thời gian.
+
+
+Ghi chú thêm / next steps:
+- Nếu muốn mình có thể: 1) đánh dấu endpoint nào yêu cầu authentication/roles; 2) tạo file OpenAPI/Swagger; 3) revert SecurityConfig để chỉ cho phép auth-free những endpoint cần thiết; 4) cập nhật frontend URLs.

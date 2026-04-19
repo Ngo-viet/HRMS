@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.RequestMapping;
 
 import com.hrms.model.Employee;
 import com.hrms.model.Leaves;
@@ -17,26 +18,27 @@ import com.hrms.service.LeaveService;
 
 @RestController
 @CrossOrigin(origins = "http://localhost:4200")
+@RequestMapping("/api/leaves")
 public class LeaveController {
 
     @Autowired
     private LeaveService lservice;
 
     /**
-     * GET /leavesreport
+     * GET /api/leaves/report
      * Trả về danh sách tất cả các đơn nghỉ phép.
      */
-    @GetMapping("/leavesreport")
+    @GetMapping("/report")
     public List<Leaves> getLeaves() {
         return lservice.fetchLeaves();
     }
 
     /**
-     * POST /addleaves
+     * POST /api/leaves
      * Thêm mới đơn nghỉ phép cho employee. Body: Leaves JSON (cần employeeId).
      * Service sẽ tìm email của employee theo employeeId và gán vào đơn.
      */
-    @PostMapping("/addleaves")
+    @PostMapping("")
     public Leaves addLeaves(@RequestBody Leaves leaves) throws Exception {
         int tempId = leaves.getEmployeeId();
         System.out.println("TempEid: " + tempId);
@@ -51,37 +53,37 @@ public class LeaveController {
     }
 
     /**
-     * GET /editleaves/{id}
+     * GET /api/leaves/{id}
      * Lấy chi tiết 1 đơn nghỉ phép theo id.
      */
-    @GetMapping("/editleaves/{id}")
+    @GetMapping("/{id}")
     public Leaves getLeavesById(@PathVariable int id) {
         return lservice.getById(id).get();
     }
 
     /**
-     * POST /editleaves
+     * PUT /api/leaves/{id}
      * Cập nhật đơn nghỉ phép. Body: Leaves JSON
      */
-    @PostMapping("/editleaves")
+    @PostMapping("/edit")
     public Leaves editLeave(@RequestBody Leaves leaves) {
         return lservice.editLeaves(leaves);
     }
 
     /**
-     * GET /deleteleaves/{id}
+     * DELETE /api/leaves/{id}
      * Xóa đơn nghỉ phép theo id.
      */
-    @GetMapping("/deleteleaves/{id}")
+    @GetMapping("/delete/{id}")
     public void deleteLeaves(@PathVariable int id) {
         lservice.deleteleaves(id);
     }
 
     /**
-     * POST /leaves/{id}/approve?approver=NAME
+     * POST /api/leaves/{id}/approve?approver=NAME
      * Duyệt đơn nghỉ phép: đổi status -> APPROVED, ghi approvedBy, approvedDate
      */
-    @PostMapping("/leaves/{id}/approve")
+    @PostMapping("/{id}/approve")
     public Leaves approveLeave(@PathVariable int id, @RequestParam String approver) throws Exception {
         var opt = lservice.getById(id);
         if (opt.isEmpty()) throw new Exception("Leave not found");
@@ -93,10 +95,10 @@ public class LeaveController {
     }
 
     /**
-     * POST /leaves/{id}/reject?approver=NAME
+     * POST /api/leaves/{id}/reject?approver=NAME
      * Từ chối đơn nghỉ phép
      */
-    @PostMapping("/leaves/{id}/reject")
+    @PostMapping("/{id}/reject")
     public Leaves rejectLeave(@PathVariable int id, @RequestParam String approver) throws Exception {
         var opt = lservice.getById(id);
         if (opt.isEmpty()) throw new Exception("Leave not found");
@@ -108,28 +110,28 @@ public class LeaveController {
     }
 
     /**
-     * POST /leaves/approve/{id}
+     * POST /api/leaves/approve/{id}
      * Duyệt đơn (API mới yêu cầu): approver là người thực hiện action (query param `approver`).
      */
-    @PostMapping("/leaves/approve/{id}")
+    @PostMapping("/approve/{id}")
     public Leaves approveLeaveNew(@PathVariable int id, @RequestParam String approver) throws Exception {
         return lservice.approveLeave(id, approver);
     }
 
     /**
-     * POST /leaves/reject/{id}
+     * POST /api/leaves/reject/{id}
      * Từ chối đơn (API mới yêu cầu): approver query param.
      */
-    @PostMapping("/leaves/reject/{id}")
+    @PostMapping("/reject/{id}")
     public Leaves rejectLeaveNew(@PathVariable int id, @RequestParam String approver) throws Exception {
         return lservice.rejectLeave(id, approver);
     }
 
     /**
-     * GET /leaves/pending?approver=NAME
+     * GET /api/leaves/pending?approver=NAME
      * Lấy danh sách đơn đang chờ duyệt; `approver` là tên người gọi API, để log hoặc filter nếu cần.
      */
-    @GetMapping("/leaves/pending")
+    @GetMapping("/pending")
     public java.util.Map<String, Object> getPendingLeaves(@RequestParam(required = false) String approver) {
         // Return wrapper with who requested and the pending leaves list
         System.out.println("Leaves pending requested by: " + approver);

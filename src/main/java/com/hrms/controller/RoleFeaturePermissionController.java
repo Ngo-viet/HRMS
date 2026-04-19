@@ -10,43 +10,44 @@ import java.util.List;
 
 @RestController
 @CrossOrigin(origins = "http://localhost:4200")
+@RequestMapping("/api/rfp")
 public class RoleFeaturePermissionController {
 
     @Autowired
     private RoleFeaturePermissionService rfpService;
 
     /**
-     * GET /rfp
+     * GET /api/rfp
      * Lấy danh sách tất cả bản ghi Role-Feature-Permission.
      */
-    @GetMapping("/rfp")
+    @GetMapping("")
     public List<RoleFeaturePermission> getAll() {
         return rfpService.fetchAll();
     }
 
     /**
-     * GET /rfp/{id}
+     * GET /api/rfp/{id}
      * Lấy chi tiết 1 bản ghi RFP theo id.
      */
-    @GetMapping("/rfp/{id}")
+    @GetMapping("/{id}")
     public ResponseEntity<RoleFeaturePermission> getById(@PathVariable int id) {
         return rfpService.getById(id).map(ResponseEntity::ok).orElse(ResponseEntity.notFound().build());
     }
 
     /**
-     * POST /rfp
+     * POST /api/rfp
      * Tạo bản ghi Role-Feature-Permission mới. Body: RoleFeaturePermission JSON (role, feature, flags).
      */
-    @PostMapping("/rfp")
+    @PostMapping("")
     public RoleFeaturePermission create(@RequestBody RoleFeaturePermission rfp) {
         return rfpService.create(rfp);
     }
 
     /**
-     * PUT /rfp/{id}
+     * PUT /api/rfp/{id}
      * Cập nhật RFP theo id.
      */
-    @PutMapping("/rfp/{id}")
+    @PutMapping("/{id}")
     public ResponseEntity<RoleFeaturePermission> update(@PathVariable int id, @RequestBody RoleFeaturePermission rfp) {
         if (!rfpService.getById(id).isPresent()) {
             return ResponseEntity.notFound().build();
@@ -56,48 +57,48 @@ public class RoleFeaturePermissionController {
     }
 
     /**
-     * DELETE /rfp/{id}
+     * DELETE /api/rfp/{id}
      * Xóa bản ghi RFP.
      */
-    @DeleteMapping("/rfp/{id}")
+    @DeleteMapping("/{id}")
     public ResponseEntity<Void> delete(@PathVariable int id) {
         rfpService.delete(id);
         return ResponseEntity.noContent().build();
     }
 
     /**
-     * GET /roles/{roleId}/rfp
+     * GET /api/roles/{roleId}/rfp
      * Lấy tất cả RFP cho 1 role.
      */
-    @GetMapping("/roles/{roleId}/rfp")
+    @GetMapping("/roles/{roleId}")
     public List<RoleFeaturePermission> byRole(@PathVariable int roleId) {
         return rfpService.findByRoleId(roleId);
     }
 
     /**
-     * GET /features/{featureId}/rfp
+     * GET /api/features/{featureId}/rfp
      * Lấy tất cả RFP cho 1 feature.
      */
-    @GetMapping("/features/{featureId}/rfp")
+    @GetMapping("/features/{featureId}")
     public List<RoleFeaturePermission> byFeature(@PathVariable int featureId) {
         return rfpService.findByFeatureId(featureId);
     }
 
     /**
-     * GET /roles/{roleId}/features/{featureId}/rfp
+     * GET /api/roles/{roleId}/features/{featureId}/rfp
      * Lấy RFP cho cặp role + feature cụ thể.
      */
-    @GetMapping("/roles/{roleId}/features/{featureId}/rfp")
+    @GetMapping("/roles/{roleId}/features/{featureId}")
     public ResponseEntity<RoleFeaturePermission> byRoleAndFeature(@PathVariable int roleId, @PathVariable int featureId) {
         return rfpService.findByRoleAndFeature(roleId, featureId).map(ResponseEntity::ok).orElse(ResponseEntity.notFound().build());
     }
 
     /**
-     * POST /roles/{roleId}/features/{featureId}/rfp
+     * POST /api/roles/{roleId}/features/{featureId}/rfp
      * Tạo hoặc cập nhật bản ghi Role-Feature-Permission (RFP) cho cặp role/feature.
      * Body: RoleFeaturePermission JSON (các flag canCreate/canRead/canUpdate/canDelete)
      */
-    @PostMapping("/roles/{roleId}/features/{featureId}/rfp")
+    @PostMapping("/roles/{roleId}/features/{featureId}")
     public RoleFeaturePermission assignFeatureToRole(@PathVariable int roleId,
                                                      @PathVariable int featureId,
                                                      @RequestBody RoleFeaturePermission rfp) throws Exception {
@@ -120,10 +121,10 @@ public class RoleFeaturePermissionController {
     }
 
     /**
-     * DELETE /roles/{roleId}/features/{featureId}/rfp
+     * DELETE /api/roles/{roleId}/features/{featureId}/rfp
      * Xóa RFP cho cặp role/feature nếu có.
      */
-    @DeleteMapping("/roles/{roleId}/features/{featureId}/rfp")
+    @DeleteMapping("/roles/{roleId}/features/{featureId}")
     public ResponseEntity<Void> removeRfp(@PathVariable int roleId, @PathVariable int featureId) throws Exception {
         var existing = rfpService.findByRoleAndFeature(roleId, featureId);
         if (existing.isEmpty()) return ResponseEntity.notFound().build();

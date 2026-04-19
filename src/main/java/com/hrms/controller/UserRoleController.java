@@ -12,13 +12,14 @@ import java.util.Set;
 
 @RestController
 @CrossOrigin(origins = "http://localhost:4200")
+@RequestMapping("/api")
 public class UserRoleController {
 
     @Autowired
     private UserRoleService userRoleService;
 
     /**
-     * GET /users/{userId}/roles
+     * GET /api/users/{userId}/roles
      * Lấy danh sách role mà user đang có.
      */
     @GetMapping("/users/{userId}/roles")
@@ -27,7 +28,7 @@ public class UserRoleController {
     }
 
     /**
-     * GET /roles/{roleId}/users
+     * GET /api/roles/{roleId}/users
      * Lấy danh sách user thuộc role này.
      */
     @GetMapping("/roles/{roleId}/users")
@@ -36,7 +37,7 @@ public class UserRoleController {
     }
 
     /**
-     * POST /users/{userId}/roles/{roleId}
+     * POST /api/users/{userId}/roles/{roleId}
      * Gán role cho user.
      */
     @PostMapping("/users/{userId}/roles/{roleId}")
@@ -46,7 +47,7 @@ public class UserRoleController {
     }
 
     /**
-     * POST /users/{userId}/roles
+     * POST /api/users/{userId}/roles
      * (Optional) API để gán nhiều role cho user bằng danh sách roleId trong body.
      * Body: [1,2,3]
      */
@@ -57,7 +58,7 @@ public class UserRoleController {
     }
 
     /**
-     * DELETE /users/{userId}/roles/{roleId}
+     * DELETE /api/users/{userId}/roles/{roleId}
      * Bỏ role khỏi user.
      */
     @DeleteMapping("/users/{userId}/roles/{roleId}")

@@ -12,37 +12,38 @@ import java.util.List;
 
 @RestController
 @CrossOrigin(origins = "http://localhost:4200")
+@RequestMapping("/api/ot")
 public class OvertimeController {
 
     @Autowired
     private OvertimeService overtimeService;
 
     /**
-     * POST /ot
+     * POST /api/ot
      * Tạo bản ghi OT. Body: Overtime JSON (employeeId, date, startTime, endTime, hours, reason)
      */
-    @PostMapping("/ot")
+    @PostMapping("")
     public Overtime create(@RequestBody Overtime o) { return overtimeService.register(o); }
 
     /**
-     * GET /ot/{id}
+     * GET /api/ot/{id}
      * Lấy chi tiết OT theo id.
      */
-    @GetMapping("/ot/{id}")
+    @GetMapping("/{id}")
     public ResponseEntity<Overtime> get(@PathVariable int id) { return overtimeService.getById(id).map(ResponseEntity::ok).orElse(ResponseEntity.notFound().build()); }
 
     /**
-     * GET /ot/employee/{empId}
+     * GET /api/ot/employee/{empId}
      * Lấy danh sách OT của 1 nhân viên.
      */
-    @GetMapping("/ot/employee/{empId}")
+    @GetMapping("/employee/{empId}")
     public List<Overtime> listByEmployee(@PathVariable int empId) { return overtimeService.fetchByEmployee(empId); }
 
     /**
-     * GET /ot/employee/{empId}/period?from=yyyy-MM-dd&to=yyyy-MM-dd
+     * GET /api/ot/employee/{empId}/period?from=yyyy-MM-dd&to=yyyy-MM-dd
      * Lấy OT trong khoảng thời gian cho nhân viên.
      */
-    @GetMapping("/ot/employee/{empId}/period")
+    @GetMapping("/employee/{empId}/period")
     public List<Overtime> listByEmployeePeriod(@PathVariable int empId,
                                                @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate from,
                                                @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate to) {
@@ -50,27 +51,27 @@ public class OvertimeController {
     }
 
     /**
-     * PUT /ot/{id}
+     * PUT /api/ot/{id}
      * Cập nhật OT.
      */
-    @PutMapping("/ot/{id}")
+    @PutMapping("/{id}")
     public ResponseEntity<Overtime> update(@PathVariable int id, @RequestBody Overtime o) {
         if (overtimeService.getById(id).isEmpty()) return ResponseEntity.notFound().build();
         o.setOtId(id); return ResponseEntity.ok(overtimeService.edit(o));
     }
 
     /**
-     * DELETE /ot/{id}
+     * DELETE /api/ot/{id}
      * Xóa OT theo id.
      */
-    @DeleteMapping("/ot/{id}")
+    @DeleteMapping("/{id}")
     public ResponseEntity<Void> delete(@PathVariable int id) { overtimeService.delete(id); return ResponseEntity.noContent().build(); }
 
     /**
-     * POST /ot/{id}/approve?approver=NAME
+     * POST /api/ot/{id}/approve?approver=NAME
      * Duyệt OT: đổi status -> APPROVED, lưu approver và date.
      */
-    @PostMapping("/ot/{id}/approve")
+    @PostMapping("/{id}/approve")
     public ResponseEntity<Overtime> approve(@PathVariable int id, @RequestParam String approver) throws Exception {
         var opt = overtimeService.getById(id);
         if (opt.isEmpty()) return ResponseEntity.notFound().build();
@@ -80,10 +81,10 @@ public class OvertimeController {
     }
 
     /**
-     * POST /ot/{id}/reject?approver=NAME
+     * POST /api/ot/{id}/reject?approver=NAME
      * Từ chối OT: đổi status -> REJECTED, lưu approver và date.
      */
-    @PostMapping("/ot/{id}/reject")
+    @PostMapping("/{id}/reject")
     public ResponseEntity<Overtime> reject(@PathVariable int id, @RequestParam String approver) throws Exception {
         var opt = overtimeService.getById(id);
         if (opt.isEmpty()) return ResponseEntity.notFound().build();

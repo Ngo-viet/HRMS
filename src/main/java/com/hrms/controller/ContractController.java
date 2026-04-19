@@ -12,35 +12,35 @@ import java.util.List;
 
 @RestController
 @CrossOrigin(origins = "http://localhost:4200")
-@RequestMapping("/contracts")
+@RequestMapping("/api/contracts")
 public class ContractController {
 
     @Autowired
     private ContractService contractService;
 
     /**
-     * GET /contracts
+     * GET /api/contracts
      * Trả về danh sách tất cả hợp đồng.
      */
     @GetMapping("")
     public List<Contract> listAll() { return contractService.getAll(); }
 
     /**
-     * GET /contracts/{id}
+     * GET /api/contracts/{id}
      * Lấy chi tiết hợp đồng theo id.
      */
     @GetMapping("/{id}")
     public ResponseEntity<Contract> get(@PathVariable int id) { return contractService.getById(id).map(ResponseEntity::ok).orElse(ResponseEntity.notFound().build()); }
 
     /**
-     * GET /contracts/employee/{empId}
+     * GET /api/contracts/employee/{empId}
      * Lấy tất cả hợp đồng của 1 nhân viên theo empId.
      */
     @GetMapping("/employee/{empId}")
     public List<Contract> byEmployee(@PathVariable int empId) { return contractService.getByEmployee(empId); }
 
     /**
-     * POST /contracts
+     * POST /api/contracts
      * Tạo hợp đồng mới. Body: ContractDto JSON (employeeId, startDate, endDate, contractType, contractSalary, status, notes)
      */
     @PostMapping("")
@@ -57,7 +57,7 @@ public class ContractController {
     }
 
     /**
-     * PUT /contracts/{id}
+     * PUT /api/contracts/{id}
      * Cập nhật hợp đồng theo id. Body: ContractDto JSON
      */
     @PutMapping("/{id}")
@@ -76,7 +76,7 @@ public class ContractController {
     }
 
     /**
-     * DELETE /contracts/{id}
+     * DELETE /api/contracts/{id}
      * Xóa hợp đồng theo id.
      */
     @DeleteMapping("/{id}")

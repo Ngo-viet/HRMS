@@ -10,43 +10,44 @@ import java.util.List;
 
 @RestController
 @CrossOrigin(origins = "http://localhost:4200")
+@RequestMapping("/api/permissions")
 public class PermissionController {
 
     @Autowired
     private PermissionService permissionService;
 
     /**
-     * GET /permissions
+     * GET /api/permissions
      * Trả về danh sách tất cả permission (Role-Feature với các flag CRUD).
      */
-    @GetMapping("/permissions")
+    @GetMapping("")
     public List<Permission> getPermissions() {
         return permissionService.fetchPermissions();
     }
 
     /**
-     * POST /permissions
+     * POST /api/permissions
      * Tạo permission mới (body: Permission JSON với role và feature reference và các flag).
      */
-    @PostMapping("/permissions")
+    @PostMapping("")
     public Permission createPermission(@RequestBody Permission p) {
         return permissionService.register(p);
     }
 
     /**
-     * GET /permissions/{id}
+     * GET /api/permissions/{id}
      * Lấy permission theo id.
      */
-    @GetMapping("/permissions/{id}")
+    @GetMapping("/{id}")
     public Permission getPermission(@PathVariable int id) throws Exception {
         return permissionService.getById(id).orElseThrow(() -> new Exception("Permission not found"));
     }
 
     /**
-     * PUT /permissions/{id}
+     * PUT /api/permissions/{id}
      * Cập nhật flags của permission (canCreate/canRead/canUpdate/canDelete).
      */
-    @PutMapping("/permissions/{id}")
+    @PutMapping("/{id}")
     public Permission updatePermission(@PathVariable int id, @RequestBody Permission p) throws Exception {
         Permission existing = permissionService.getById(id).orElseThrow(() -> new Exception("Permission not found"));
         existing.setCanCreate(p.getCanCreate());
@@ -57,40 +58,40 @@ public class PermissionController {
     }
 
     /**
-     * DELETE /permissions/{id}
+     * DELETE /api/permissions/{id}
      * Xóa permission theo id.
      */
-    @DeleteMapping("/permissions/{id}")
+    @DeleteMapping("/{id}")
     public ResponseEntity<Void> deletePermission(@PathVariable int id) {
         permissionService.deletePermission(id);
         return ResponseEntity.noContent().build();
     }
 
     /**
-     * GET /roles/{roleId}/permissions
+     * GET /api/roles/{roleId}/permissions
      * Lấy danh sách permission cho một role cụ thể.
      */
-    @GetMapping("/roles/{roleId}/permissions")
+    @GetMapping("/roles/{roleId}")
     public List<Permission> getPermissionsByRole(@PathVariable int roleId) {
         return permissionService.getByRole(roleId);
     }
 
     /**
-     * GET /features/{featureId}/permissions
+     * GET /api/features/{featureId}/permissions
      * Lấy danh sách permission cho một feature cụ thể.
      */
-    @GetMapping("/features/{featureId}/permissions")
+    @GetMapping("/features/{featureId}")
     public List<Permission> getPermissionsByFeature(@PathVariable int featureId) {
         return permissionService.getByFeature(featureId);
     }
 
     /**
-     * POST /roles/{roleId}/features/{featureId}/permissions
+     * POST /api/roles/{roleId}/features/{featureId}/permissions
      * Gán permission cho cặp (role, feature). Nếu permission đã tồn tại sẽ cập nhật các flag,
      * nếu chưa tồn tại sẽ tạo mới.
      * Body: Permission JSON (các flag canCreate/canRead/canUpdate/canDelete) — role và feature được lấy từ path.
      */
-    @PostMapping("/roles/{roleId}/features/{featureId}/permissions")
+    @PostMapping("/roles/{roleId}/features/{featureId}")
     public Permission assignPermissionToFeature(@PathVariable int roleId,
                                                 @PathVariable int featureId,
                                                 @RequestBody Permission p) throws Exception {
@@ -116,10 +117,10 @@ public class PermissionController {
     }
 
     /**
-     * DELETE /roles/{roleId}/features/{featureId}/permissions
+     * DELETE /api/roles/{roleId}/features/{featureId}/permissions
      * Xóa permission cho cặp (role, feature) nếu tồn tại.
      */
-    @DeleteMapping("/roles/{roleId}/features/{featureId}/permissions")
+    @DeleteMapping("/roles/{roleId}/features/{featureId}")
     public ResponseEntity<Void> removePermissionFromFeature(@PathVariable int roleId,
                                                             @PathVariable int featureId) throws Exception {
         var existing = permissionService.getByRoleAndFeature(roleId, featureId);
