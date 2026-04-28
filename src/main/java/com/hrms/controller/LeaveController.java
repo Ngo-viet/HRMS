@@ -2,15 +2,11 @@ package com.hrms.controller;
 
 import java.util.List;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.CrossOrigin;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
-import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.*;
 
 import com.hrms.model.Employee;
 import com.hrms.model.Leaves;
@@ -28,9 +24,9 @@ public class LeaveController {
      * GET /api/leaves/report
      * Trả về danh sách tất cả các đơn nghỉ phép.
      */
-    @GetMapping("/report")
-    public List<Leaves> getLeaves() {
-        return lservice.fetchLeaves();
+    @GetMapping("/search")
+    public Page<Leaves> getLeaves(@PageableDefault(size = 10) Pageable pageable) {
+        return lservice.fetchLeaves(pageable);
     }
 
     /**
@@ -65,7 +61,7 @@ public class LeaveController {
      * PUT /api/leaves/{id}
      * Cập nhật đơn nghỉ phép. Body: Leaves JSON
      */
-    @PostMapping("/edit")
+    @PutMapping("/edit")
     public Leaves editLeave(@RequestBody Leaves leaves) {
         return lservice.editLeaves(leaves);
     }
@@ -74,7 +70,7 @@ public class LeaveController {
      * DELETE /api/leaves/{id}
      * Xóa đơn nghỉ phép theo id.
      */
-    @GetMapping("/delete/{id}")
+    @DeleteMapping("/{id}")
     public void deleteLeaves(@PathVariable int id) {
         lservice.deleteleaves(id);
     }

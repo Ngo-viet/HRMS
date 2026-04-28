@@ -3,6 +3,8 @@ package com.hrms.service;
 import java.util.List;
 import java.util.Optional;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -29,9 +31,9 @@ public class EmployeeService
 		}
 		
 		//fetch Employees List		
-		public List<Employee>fetchEmployees()
+		public Page<Employee> fetchEmployees(String firstName, String lastName, String department, String email, Pageable pageable)
 		{
-			return repo.findAll();
+			return repo.searchEmployees(firstName, lastName, department, email, pageable);
 		}
 	
 		//get Emp by ID

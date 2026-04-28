@@ -10,8 +10,6 @@ public class ApiResponse<T> {
     private String clientMessageId;
     private long timestamp;
     private T data;
-    private List<String> errors;
-
     public ApiResponse() { }
 
     public ApiResponse(boolean success, int status, String message, String clientMessageId, long timestamp, T data, List<String> errors) {
@@ -21,7 +19,6 @@ public class ApiResponse<T> {
         this.clientMessageId = clientMessageId;
         this.timestamp = timestamp;
         this.data = data;
-        this.errors = errors;
     }
 
     public static <T> ApiResponse<T> of(boolean success, int status, String message, String clientMessageId, T data, List<String> errors) {
@@ -45,7 +42,4 @@ public class ApiResponse<T> {
 
     public T getData() { return data; }
     public void setData(T data) { this.data = data; }
-
-    public List<String> getErrors() { return errors; }
-    public void setErrors(List<String> errors) { this.errors = errors; }
 }

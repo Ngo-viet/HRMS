@@ -5,6 +5,8 @@ import java.sql.SQLException;
 import java.util.List;
 import java.util.Optional;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataAccessException;
 import org.springframework.jdbc.core.JdbcTemplate;
@@ -29,8 +31,8 @@ public class LeaveService {
 	}
 
 	// fetch leave
-	public List<Leaves> fetchLeaves() {
-		return repo.findAll();
+	public Page<Leaves> fetchLeaves(Pageable pageable) {
+		return repo.findAll(pageable);
 	}
 
 	// get Leaves by ID

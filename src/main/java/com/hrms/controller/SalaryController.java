@@ -1,7 +1,8 @@
 package com.hrms.controller;
 
-import java.util.List;
-
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -12,6 +13,7 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.bind.annotation.RequestMapping;
 
 import com.hrms.model.Salary;
+import com.hrms.model.SalaryDTO;
 import com.hrms.service.SalaryService;
 
 @RestController
@@ -23,13 +25,15 @@ public class SalaryController {
     private SalaryService sservice;
 
     /**
-     * GET /api/salary/report
-     * Trả về danh sách các bản ghi lương.
+     * GET /api/salary/search
+     * Trả về danh sách lương kèm tên nhân viên (firstName, lastName).
      */
-    @GetMapping("/report")
-    public List<Salary> getSalary() {
-        return sservice.fetchSalary();
+    @GetMapping("/search")
+    public Page<SalaryDTO> getSalary(@PageableDefault(size = 10) Pageable pageable) {
+        return sservice.fetchSalaryWithEmployeeName(pageable);
     }
+
+
 
     /**
      * POST /api/salary
@@ -50,7 +54,7 @@ public class SalaryController {
     }
 
     /**
-     * PUT /api/salary/edit
+     * POST /api/salary/edit
      * Cập nhật bản ghi lương. Body: Salary JSON
      */
     @PostMapping("/edit")
@@ -59,7 +63,7 @@ public class SalaryController {
     }
 
     /**
-     * DELETE /api/salary/{sid}
+     * GET /api/salary/delete/{sid}
      * Xóa bản ghi lương theo id.
      */
     @GetMapping("/delete/{sid}")

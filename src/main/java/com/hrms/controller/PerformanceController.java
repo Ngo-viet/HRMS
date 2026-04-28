@@ -2,6 +2,9 @@ package com.hrms.controller;
 
 import com.hrms.model.Performance;
 import com.hrms.service.PerformanceService;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -21,7 +24,7 @@ public class PerformanceController {
      * Trả về danh sách tất cả bản ghi performance (KPI).
      */
     @GetMapping("")
-    public List<Performance> listAll() { return performanceService.getByPeriod(null); }
+    public Page<Performance> listAll(@PageableDefault(size = 10) Pageable pageable) { return performanceService.getAll(pageable); }
 
     /**
      * GET /api/performance/{id}

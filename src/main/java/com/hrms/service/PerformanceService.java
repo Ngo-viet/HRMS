@@ -2,6 +2,8 @@ package com.hrms.service;
 
 import com.hrms.model.Performance;
 import com.hrms.repository.PerformanceRepository;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -15,6 +17,7 @@ public class PerformanceService {
     private PerformanceRepository repository;
 
     public Performance create(Performance p) { return repository.save(p); }
+    public Page<Performance> getAll(Pageable pageable) { return repository.findAll(pageable); }
     public Optional<Performance> getById(int id) { return repository.findById(id); }
     public List<Performance> getByEmployee(int empId) { return repository.findByEmployeeId(empId); }
     public List<Performance> getByPeriod(String period) { return repository.findByPeriod(period); }

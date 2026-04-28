@@ -4,9 +4,13 @@ import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.RequestParam;
 
 import com.hrms.model.Employee;
 import com.hrms.service.EmployeeService;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.web.PageableDefault;
 
 @RestController
 @CrossOrigin(origins = "http://localhost:4200")
@@ -21,8 +25,12 @@ public class EmployeeController {
      * Trả về danh sách tất cả nhân viên.
      */
     @GetMapping("/employeereport")
-    public List<Employee> getemployees() {
-        return eservice.fetchEmployees();
+    public Page<Employee> getemployees(@RequestParam(required = false) String firstName,
+                                       @RequestParam(required = false) String lastName,
+                                       @RequestParam(required = false) String department,
+                                       @RequestParam(required = false) String email,
+                                       @PageableDefault(size = 10) Pageable pageable) {
+        return eservice.fetchEmployees(firstName, lastName, department, email, pageable);
     }
 
     /**

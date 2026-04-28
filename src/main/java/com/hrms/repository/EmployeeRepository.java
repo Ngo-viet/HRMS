@@ -7,9 +7,8 @@ import com.hrms.model.Employee;
 
 
 @Repository
-public interface EmployeeRepository extends JpaRepository<Employee, Integer> 
+public interface EmployeeRepository extends JpaRepository<Employee, Integer>, EmployeeRepositoryCustom 
 {
 	//some specific method
 	public Employee findByEmail(String tempEmail);
-
 }
