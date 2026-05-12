@@ -18,6 +18,7 @@ public class PerformanceService {
 
     public Performance create(Performance p) { return repository.save(p); }
     public Page<Performance> getAll(Pageable pageable) { return repository.findAll(pageable); }
+    public List<Performance> getAllList() { return repository.findAll(); }
     public Optional<Performance> getById(int id) { return repository.findById(id); }
     public List<Performance> getByEmployee(int empId) { return repository.findByEmployeeId(empId); }
     public List<Performance> getByPeriod(String period) { return repository.findByPeriod(period); }

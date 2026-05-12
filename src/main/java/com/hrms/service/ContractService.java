@@ -20,6 +20,7 @@ public class ContractService {
     public Optional<Contract> getById(int id) { return repo.findById(id); }
     public List<Contract> getByEmployee(int empId) { return repo.findByEmployeeId(empId); }
     public Page<Contract> getAll(Pageable pageable) { return repo.findAll(pageable); }
+    public List<Contract> getAllList() { return repo.findAll(); }
     public Contract update(Contract c) { return repo.save(c); }
     public void delete(int id) { repo.deleteById(id); }
 }

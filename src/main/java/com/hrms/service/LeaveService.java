@@ -35,6 +35,11 @@ public class LeaveService {
 		return repo.findAll(pageable);
 	}
 
+	// fetch all leaves (không phân trang)
+	public List<Leaves> fetchAllLeaves() {
+		return repo.findAll();
+	}
+
 	// get Leaves by ID
 	public Optional<Leaves> getById(int id) {
 		return repo.findById(id);

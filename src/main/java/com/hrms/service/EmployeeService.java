@@ -35,6 +35,11 @@ public class EmployeeService
 		{
 			return repo.searchEmployees(firstName, lastName, department, email, pageable);
 		}
+
+		// fetch all employees (không phân trang)
+		public List<Employee> fetchAllEmployees() {
+			return repo.findAll();
+		}
 	
 		//get Emp by ID
 		public Optional<Employee> getById(int id)

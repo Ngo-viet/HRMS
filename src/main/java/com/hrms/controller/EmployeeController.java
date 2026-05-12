@@ -14,7 +14,7 @@ import org.springframework.data.web.PageableDefault;
 
 @RestController
 @CrossOrigin(origins = "http://localhost:4200")
-@RequestMapping("/api")
+@RequestMapping("/api/employees")
 public class EmployeeController {
 
     @Autowired
@@ -24,7 +24,7 @@ public class EmployeeController {
      * GET /api/employeereport
      * Trả về danh sách tất cả nhân viên.
      */
-    @GetMapping("/employeereport")
+    @GetMapping("/search")
     public Page<Employee> getemployees(@RequestParam(required = false) String firstName,
                                        @RequestParam(required = false) String lastName,
                                        @RequestParam(required = false) String department,
@@ -34,10 +34,19 @@ public class EmployeeController {
     }
 
     /**
+     * GET /api/employees/all
+     * Trả về toàn bộ danh sách nhân viên (không phân trang).
+     */
+    @GetMapping("/list")
+    public List<Employee> getAllEmployees() {
+        return eservice.fetchAllEmployees();
+    }
+
+    /**
      * POST /api/addemployee
      * Tạo mới một nhân viên. Body: Employee JSON. Kiểm tra trùng email trước khi tạo.
      */
-    @PostMapping("/addemployee")
+    @PostMapping("/add")
     public Employee registerEmployee(@RequestBody Employee employee) throws Exception {
         String tempEmail = employee.getEmail();
         if (tempEmail != null && !"".equals(tempEmail)) {
@@ -54,7 +63,7 @@ public class EmployeeController {
      * GET /api/editemployee/{id}
      * Lấy thông tin employee theo id để edit.
      */
-    @GetMapping("/editemployee/{id}")
+    @GetMapping("/edit/{id}")
     public Employee getEmpById(@PathVariable int id) {
         return eservice.getById(id).get();
     }
@@ -63,7 +72,7 @@ public class EmployeeController {
      * POST /api/editemployee
      * Cập nhật thông tin employee. Body: Employee JSON
      */
-    @PostMapping("/editemployee")
+    @PostMapping("/edit")
     public Employee editEmployee(@RequestBody Employee employee) {
         return eservice.editEmployee(employee);
     }
@@ -72,7 +81,7 @@ public class EmployeeController {
      * GET /api/deleteemployee/{id}
      * Xóa employee theo id.
      */
-    @GetMapping("/deleteemployee/{id}")
+    @GetMapping("/delete/{id}")
     public void deleteEmployee(@PathVariable int id) {
         eservice.deleteEmp(id);
     }
